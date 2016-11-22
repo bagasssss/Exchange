@@ -7,7 +7,7 @@ namespace ExchangerManager.DataLogic
     public class ExchangerDbSet: DbContext
     {
         public ExchangerDbSet():
-            base(@"Data Source=(localdb)\ProjectsV13;Initial Catalog=Exchanger;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
+            base(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Exchanger;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
         {
         }
 
