@@ -15,3 +15,22 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.table-head-text-color {
+    color:white;
+}
+
+.table-head-background-color {
+    background-color: #55595c;
+}
+
+.header-text {
+    display: block;
+    float: left;
+    padding: 10px 20px 10px;
+    margin-left: -20px;
+    font-size: 20px;
+    font-weight: 200;
+    color: #777777;
+    /*text-shadow: 0 1px 0 #ffffff;*/
+}

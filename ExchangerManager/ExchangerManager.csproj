@@ -177,7 +177,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\AddMovie.html" />
+    <Content Include="app\newExchangeOperation.html" />
     <Content Include="app\app.js" />
     <Content Include="app\Configs\appConfig.js" />
     <Content Include="app\Controllers\Controllers.js" />

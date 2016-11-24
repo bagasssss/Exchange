@@ -3,6 +3,7 @@ using System.Web.Http;
 using ExchangerManager.DataLogic;
 using ExchangerManager.Models.DomainModels;
 using ExchangerManager.Models.ViewModels;
+using System;
 
 namespace ExchangerManager.Controllers
 {
@@ -19,7 +20,7 @@ namespace ExchangerManager.Controllers
         public IHttpActionResult Get()
         {
             var exchanges = _dbSet.Exchanges.ToList();
-            return Ok(new { exchanges });
+            return Ok(exchanges);
         }
 
         [HttpPost]
@@ -33,7 +34,7 @@ namespace ExchangerManager.Controllers
 
             _dbSet.Exchanges.Add(new Exchange()
             {
-                DateTime = exchange.DateTime,
+                DateTime = DateTime.Now,
                 InputAmount = exchange.InputAmount,
                 OutputAmount = exchange.OutputAmount,
                 InputCurrency = inputCurr,
@@ -57,7 +58,7 @@ namespace ExchangerManager.Controllers
             if (inputCurr == null || outputCurr == null)
                 return NotFound();
 
-            dbExchange.DateTime = exchange.DateTime;
+            dbExchange.DateTime = DateTime.Now;
             dbExchange.InputAmount = exchange.InputAmount;
             dbExchange.OutputAmount = exchange.OutputAmount;
             dbExchange.InputCurrency = inputCurr;

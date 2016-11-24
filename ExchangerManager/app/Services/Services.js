@@ -2,12 +2,14 @@
     angular.module("app.services", [])
         .factory("dbServices", function ($http) {
 
-            var getAllMoviesFromDB_path = "../api/movie/getAll";
-            var getMovieFromDBByTitle_path = "../api/movie/searchByTitle";
-            var addNewMovie_path = "../api/movie/add";
-            var removeMovieFromDBByTitle_path = "../api/movie/delete";
+            var getAllDataFromBD_path = "../api/exchange/get";
+            var addNewOperation_path = "../api/exchange/add";
+            var removeFromDB_path = "../api/movie/delete";
+            var updateOperation_path = "../api/movie/update";
+
             var isDeleteSuccess = false;
             var isAddingSuccess = false;
+            var isUpdateSuccess = false;
 
 
             return {
@@ -19,49 +21,54 @@
                     return isAddingSuccess;
                 },
 
-                getAllMovies: function () {
-                    return $http({
-                        method: 'GET',
-                        url: getAllMoviesFromDB_path
-                    }).success(function (response) {
-                        console.log(response);
-                        console.log(response.movies);
-                        return response;
-                    })
+                returnIsUpdateSuccess: function() {
+                    return isUpdateSuccess;
                 },
 
-                getMovieByTitle: function (title) {
+                getAllDataFromDb: function () {
                     return $http({
                         method: 'GET',
-                        url: getMovieFromDBByTitle_path,
-                        data: title
+                        url: getAllDataFromBD_path
                     }).success(function (response) {
+                        console.log('successfull');
                         console.log(response);
                         return response;
                     })
                 },
 
-                deleteMovieByTitle: function (title) {
+                removeFromDB: function (id) {
                     movieDeleting = false;
                     $http({
                         method: 'POST',
-                        url: removeMovieFromDBByTitle_path,
-                        data: title
+                        url: removeFromDB_path,
+                        data: id
                     }).success(function () {
-                        console.log("product " + title.title + " was deleted from DB");
+                        console.log("operation " + id + " was deleted from DB");
                         movieDeleting = true;
                     })
                 },
 
-                addNewFilm: function (film) {
+                addOperation: function (exchange) {
                     isAddingSuccess = false;
                     $http({
                         method: 'POST',
-                        url: addNewMovie_path,
-                        data: film
+                        url: addNewOperation_path,
+                        data: exchange
                     }).success(function () {
-                        console.log("product " + film + " was added succesfully")
+                        console.log("operation " + exchange + " was added succesfully")
                         isAddingSuccess = true;
+                    })
+                },
+
+                updateOperation: function (exchange) {
+                    isUpdateSuccess = false;
+                    $http({
+                        method: 'POST',
+                        url: updateOperation_path,
+                        data: exchange
+                    }).success(function () {
+                        console.log("operation was updated successfully");
+                        isUpdateSuccess = true;
                     })
                 }
             }
@@ -71,7 +78,8 @@
         $httpProvider.interceptors.push(function ($q, $window) {
             return {
                 request: function (config) {
-                    config.header =  { 'MovieApp' : '12345' };
+                    //config.header =  { 'accessKey' : 'testKEY' };
+                    config.headers['accessKey'] = 'testKEY';
                     return config;
                 },
                 responseError: function (response) {
