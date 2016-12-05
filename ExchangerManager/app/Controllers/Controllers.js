@@ -1,98 +1,127 @@
 ﻿(function () {
     angular.module("app.controllers", ["app.services"])
-        .controller("dataController", function ($scope, dbServices) {
+        .controller("dataController", function ( dbServices) {
+            var vm = this;
 
-            //$scope.list;
-            //getAllMovies();
-            //function getAllMovies() {   
-            //    dbServices.getAllDataFromDb().success(function (data) {
-            //        $scope.list = data;
-            //    })
-            //    console.log($scope.list);
-            //};
+            vm.list;
+            activate();
 
+            function activate() {
+                getDataFromDb();
+            };
 
-            //$scope.deleteMovie = function (film) {
-            //    if (confirm("Are you shure?")) {
-            //        dbServices.deleteFromDb(film)
-            //        if (dbServices.returnIsDeleteSuccess) {
-            //                for (var i = 0; i < $scope.list.movies.length; i++) {
-            //                    if ($scope.list.movies[i].title == film.title) {
-            //                        $scope.list.movies.splice(i, 1);
-            //                        break;
-            //                    }
-            //                }
-            //        }
-            //    }
-            //};
-
-            //$scope.addNewFilm = function(newProduct) {
-            //    dbServices.addNewFilm(newProduct);
-            //    if (dbServices.returnIsAddingSuccess) {
-            //        $scope.list.movies.push(newProduct);
-            //    }
-            //};
-
-            //$scope.movieByTitle;
-            //$scope.getMovieByTitle = function(FilmByTitle) {
-            //    dbServices.getMovieByTitle(FilmByTitle).success(function (data) {
-            //        $scope.deleteMovie = data;
-            //        $scope.errorDissable = false;
-            //    }).error(function () {
-            //        $scope.textForError = FilmByTitle;
-            //        $scope.errorDissable = true;
-            //    });
-            //};
-
-            //$scope.filterType = null;
-            //$scope.changeFilterType = function (filterTypeFromClick) {
-            //    console.log("change filter to " + filterTypeFromClick);
-            //    if ($scope.filterType === filterTypeFromClick) {
-            //        $scope.filterType = "-" + $scope.filterType;
-            //    } else {
-            //        $scope.filterType = filterTypeFromClick;
-            //    }
-            //};
-
-            //$scope.errorDissable = false;
-            //$scope.textForError;
-
-            //$scope.closeSearch = function () {
-            //    $scope.errorDissable = false;
-            //}
-            $scope.list;
-            getDataFromDb;
+            
             function getDataFromDb() {
                 dbServices.getAllDataFromDb().success(function (data) {
-                    $scope.list = data;
-                });
-                console.log('list in controller');
-                console.log($scope.list);
+                    vm.list = data;
+                    console.log('list in controller');
+                    console.log(data);
+                }); 
             };
 
-            $scope.removeMovie = function (id) {
+            vm.removeOperation = function (id) {
                 if (confirm("Are you shure?")) {
-                    dbServices.removeFromDB(id)
-                    if (dbServices.returnIsDeleteSuccess) {
-                        for (var i = 0; i < $scope.list.length; i++) {
-                            if ($scope.list[i].id === id) {
-                                $scope.list.splice(i, 1);
+                    console.log('status de: ' + dbServices.returnIsDeleteSuccess());
+                    var deletePromise = dbServices.removeFromDB(id);
+
+                    deletePromise.success(function (result) {
+                        for (var i = 0; i < vm.list.length; i++) {
+                            console.log('del from controller list...');
+                            if (vm.list[i].Id === id) {
+                                vm.list.splice(i, 1);
+                                console.log('del from controller list...complete');
                                 break;
                             }
-                        }
+                        };
+                    })
+
+                };
+             };
+
+                vm.addOperation = function (operation) {
+                    dbServices.addOperation(operation).success(function (result) {
+                        vm.list.push(operation);
+                        console.log("ADD Operation in CONTROLLER - SUCCESS")
+                    })
+                };
+
+
+                vm.startEditOperation = function (orderId) {
+                    for (var i = 0; i < vm.list.length; i++) {
+                        if (vm.list[i].Id === orderId) {
+                            //console.log(vm.list[i].IsEditMode);
+                            vm.list[i].IsEditMode = true;
+                            //console.log('editOperation for ' + orderId + ' was success');
+                            //console.log(vm.list[i].IsEditMode);
+                            break;
+                        };
+                    };
+                };
+
+                vm.cancelEditOperation = function (orderId) {
+                    for (var i = 0; i < vm.list.length; i++) {
+                        if (vm.list[i].Id === orderId) {
+                            //console.log(vm.list[i].IsEditMode);
+                            vm.list[i].IsEditMode = false;
+                            //console.log('canselEditing for ' + orderId + ' was success');
+                            //console.log(vm.list[i].IsEditMode);
+                            break;
+                        };
+                    };
+                };
+
+                vm.editOrder = function (oldOperationId, newOperation) {
+
+                    var editedOperation = newOperation;
+                    console.log(oldOperationId);
+                    editedOperation.Id = oldOperationId;
+                    //editedOperation.InputAmount = newOperation.InputAmount;
+                    //editedOperation.InputCurrency = newOperation.InputCurrency;
+                    //editedOperation.OutputAmount = newOperation.OutputAmount;
+                    //editedOperation.OutputCurrency = newOperation.OutputCurrency;
+                    editedOperation.IsEditMode = false;
+
+                    for (var i = 0; i < vm.list.length; i++) {
+                        if (vm.list[i].Id === oldOperationId) {
+                            editedOperation.DateTime = vm.list[i].DateTime;
+                            break;
+                        };
+                    };
+
+                    dbServices.updateOperation(editedOperation).success(function (result) {
+                        for (var i = 0; i < vm.list.length; i++) {
+                            if (vm.list[i].Id === oldOperationId) {
+                                vm.list[i].InputAmount = newOperation.InputAmount;
+                                vm.list[i].InputCurrency = newOperation.InputCurrency;
+                                vm.list[i].OutputAmount = newOperation.OutputAmount;
+                                vm.list[i].OutputCurrency = newOperation.OutputCurrency;
+                                
+                                console.log("editing list in controller - success");
+                                vm.list[i].IsEditMode = false;
+                                break;
+                            };
+                        };
+                    });
+                };
+
+
+                //
+                //changing filtering
+                //
+                vm.filterType = 'InputAmount';
+                vm.changeFilterType = function (newFilter) {
+                    console.log('filter changing...'+'  old type is -- '+vm.filterType);
+                
+                    if (vm.filterType === newFilter) {
+                        vm.filterType = "-" + vm.filterType;
+                    } else {
+                        vm.filterType = newFilter;
                     }
-                }
-            };
-
-            $scope.addOperation = function (operation) {
-                dbServices.addOperation();
-                if (dbServices.returnIsAddingSuccess()) {
-                    $scope.list.push(operation);
-                }
-            };
+                    console.log('the new filtertype is -- ' + vm.filterType);
+                };
 
 
 
-        })
+            })
 
 })();
