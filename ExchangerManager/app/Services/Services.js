@@ -52,9 +52,10 @@
                         method: 'POST',
                         url: updateOperation_path,
                         data: exchange
-                    }).success(function () {
+                     }).success(function () {
+                         console.log("data was UPDATED in service success");s 
                         return true;
-                        console.log("data was UPDATED in service success")
+                        
                     })
                 }
             }

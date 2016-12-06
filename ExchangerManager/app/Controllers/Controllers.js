@@ -31,10 +31,9 @@
                                 vm.list.splice(i, 1);
                                 console.log('del from controller list...complete');
                                 break;
-                            }
+                            };
                         };
                     })
-
                 };
              };
 
@@ -42,44 +41,38 @@
                     dbServices.addOperation(operation).success(function (result) {
                         vm.list.push(operation);
                         console.log("ADD Operation in CONTROLLER - SUCCESS")
-                    })
+                    });
                 };
 
 
-                vm.startEditOperation = function (orderId) {
+                vm.startEditOperation = function (operationId) {
                     for (var i = 0; i < vm.list.length; i++) {
-                        if (vm.list[i].Id === orderId) {
-                            //console.log(vm.list[i].IsEditMode);
+                        if (vm.list[i].Id === operationId) {
                             vm.list[i].IsEditMode = true;
-                            //console.log('editOperation for ' + orderId + ' was success');
-                            //console.log(vm.list[i].IsEditMode);
                             break;
                         };
                     };
                 };
 
-                vm.cancelEditOperation = function (orderId) {
+                vm.cancelEditOperation = function (operationId) {
                     for (var i = 0; i < vm.list.length; i++) {
-                        if (vm.list[i].Id === orderId) {
-                            //console.log(vm.list[i].IsEditMode);
+                        if (vm.list[i].Id === operationId) {
                             vm.list[i].IsEditMode = false;
-                            //console.log('canselEditing for ' + orderId + ' was success');
-                            //console.log(vm.list[i].IsEditMode);
                             break;
                         };
                     };
                 };
 
-                vm.editOrder = function (oldOperationId, newOperation) {
+                vm.editOperation = function (oldOperationId, newOperation) {
 
-                    var editedOperation = newOperation;
-                    console.log(oldOperationId);
-                    editedOperation.Id = oldOperationId;
-                    //editedOperation.InputAmount = newOperation.InputAmount;
-                    //editedOperation.InputCurrency = newOperation.InputCurrency;
-                    //editedOperation.OutputAmount = newOperation.OutputAmount;
-                    //editedOperation.OutputCurrency = newOperation.OutputCurrency;
-                    editedOperation.IsEditMode = false;
+                    var editedOperation = {
+                        Id: oldOperationId,
+                        InputAmount: newOperation.InputAmount,
+                        InputCurrency: newOperation.InputCurrency,
+                        OutputAmount: newOperation.OutputAmount,
+                        OutputCurrency: newOperation.OutputCurrency,
+                        IsEditMode : false
+                    };
 
                     for (var i = 0; i < vm.list.length; i++) {
                         if (vm.list[i].Id === oldOperationId) {
@@ -87,7 +80,7 @@
                             break;
                         };
                     };
-
+                    console.log(editedOperation);
                     dbServices.updateOperation(editedOperation).success(function (result) {
                         for (var i = 0; i < vm.list.length; i++) {
                             if (vm.list[i].Id === oldOperationId) {
