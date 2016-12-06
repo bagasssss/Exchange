@@ -10,5 +10,7 @@ namespace ExchangerManager.Models.ViewModels
         public decimal OutputAmount { get; set; }
         public string InputCurrency { get; set; }
         public string OutputCurrency { get; set; }
+        public string FormattedDateTime { get { return DateTime.ToShortDateString(); }  }
+        public bool IsEditMode { get; set; }
     }
 }

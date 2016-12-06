@@ -9,7 +9,7 @@
             });
 
             $routeProvider.when("/add", {
-                templateUrl: "/app/AddMovie.html"
+                templateUrl: "/app/newExchangeOperation.html"
             });
             $routeProvider.otherwise({
                 templateUrl: "/app/list.html"

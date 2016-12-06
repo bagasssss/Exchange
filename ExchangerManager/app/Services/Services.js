@@ -2,66 +2,60 @@
     angular.module("app.services", [])
         .factory("dbServices", function ($http) {
 
-            var getAllMoviesFromDB_path = "../api/movie/getAll";
-            var getMovieFromDBByTitle_path = "../api/movie/searchByTitle";
-            var addNewMovie_path = "../api/movie/add";
-            var removeMovieFromDBByTitle_path = "../api/movie/delete";
-            var isDeleteSuccess = false;
-            var isAddingSuccess = false;
-
+            var getAllDataFromBD_path = "../api/exchange/get";
+            var addNewOperation_path = "../api/exchange/add";
+            var removeFromDB_path = "../api/exchange/remove";
+            var updateOperation_path = "../api/exchange/update";
 
             return {
-                returnIsDeleteSuccess: function () {
-                    return isDeleteSuccess;
-                },
-
-                returnIsAddingSuccess: function () {
-                    return isAddingSuccess;
-                },
-
-                getAllMovies: function () {
+                getAllDataFromDb: function () {
                     return $http({
                         method: 'GET',
-                        url: getAllMoviesFromDB_path
+                        url: getAllDataFromBD_path
                     }).success(function (response) {
-                        console.log(response);
-                        console.log(response.movies);
-                        return response;
+                        console.log('getAllDataFromDB in service - successfull');
+                        //
+                        console.log(response.data);
+                        return response.data;
                     })
                 },
 
-                getMovieByTitle: function (title) {
-                    return $http({
-                        method: 'GET',
-                        url: getMovieFromDBByTitle_path,
-                        data: title
-                    }).success(function (response) {
-                        console.log(response);
-                        return response;
-                    })
-                },
-
-                deleteMovieByTitle: function (title) {
-                    movieDeleting = false;
-                    $http({
+                removeFromDB: function (id) {
+                    isDeleteSuccess = false;
+                    console.log('isDeleteSuccess ' + isDeleteSuccess);
+                     return $http({
                         method: 'POST',
-                        url: removeMovieFromDBByTitle_path,
-                        data: title
+                        url: removeFromDB_path,
+                        data: id
                     }).success(function () {
-                        console.log("product " + title.title + " was deleted from DB");
-                        movieDeleting = true;
+                        return true;
+                        console.log("removeFromDB in services - success");
                     })
                 },
 
-                addNewFilm: function (film) {
+                addOperation: function (exchange) {
+                    console.log(exchange);
                     isAddingSuccess = false;
-                    $http({
+                     return $http({
                         method: 'POST',
-                        url: addNewMovie_path,
-                        data: film
+                        url: addNewOperation_path,
+                        data: exchange
                     }).success(function () {
-                        console.log("product " + film + " was added succesfully")
-                        isAddingSuccess = true;
+                        return true;
+                        console.log("addOperation in services - success");
+                    })
+                },
+
+                updateOperation: function (exchange) {
+                    isUpdateSuccess = false;
+                     return $http({
+                        method: 'POST',
+                        url: updateOperation_path,
+                        data: exchange
+                     }).success(function () {
+                         console.log("data was UPDATED in service success");s 
+                        return true;
+                        
                     })
                 }
             }
@@ -71,7 +65,8 @@
         $httpProvider.interceptors.push(function ($q, $window) {
             return {
                 request: function (config) {
-                    config.header =  { 'MovieApp' : '12345' };
+                    
+                    config.headers['accessKey'] = 'testKEY';
                     return config;
                 },
                 responseError: function (response) {

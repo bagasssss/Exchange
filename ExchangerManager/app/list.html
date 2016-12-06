@@ -1,94 +1,94 @@
-﻿<div ng-controller="dataController">
+﻿
+<div ng-controller="dataController as dc">
     <div class="panel">
-        <div class="panel-heading">
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
-                <form class="navbar-form navbar-left" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Film Search" ng-model="searchKeyword">
-                    </div>
-                </form>
-            </div>
-        </div>
         <div class="panel-body">
-            <table class="table table-stripped table-bordered">
-                <thead>
+            <table class="table table-bordered">
+                <thead class="table-head-background-color">
                     <tr>
-                        <th class="col-xs-1"></th>
-                        <th class="col-xs-3" ng-click="changeFilterType('title')">Title</th>
-                        <th class="col-xs-3" ng-click="changeFilterType('category')">Category</th>
-                        <th class="col-xs-3" ng-click="changeFilterType('directorName')">Director</th>
-                        <th class="col-xs-2" ng-click="changeFilterType('year')">Year</th>
+                        <th><b class="table-head-text-color">#</b></th>
+                        <th ng-click="dc.changeFilterType('DateTime')"><b class="table-head-text-color">Date</b></th>
+                        <th ng-click="dc.changeFilterType('InputAmount')"><b class="table-head-text-color">Input amount</b></th>
+                        <th ng-click="dc.changeFilterType('InputCurrency.Name')"><b class="table-head-text-color">Input currency</b></th>
+                        <th ng-click="dc.changeFilterType('OutputAmount')"><b class="table-head-text-color">Output Amount</b></th>
+                        <th ng-click="dc.changeFilterType('OutputCurrency.Name')"><b class="table-head-text-color">Output currency</b></th>
+                        <th><b class="table-head-text-color">instruments</b></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="movie in list.movies| orderBy: filterType| filter: searchKeyword">
-                        <td>
-                            <button type="button" class="btn btn-sm " ng-click="deleteMovie(movie)">delete</button>
-                        </td>
-                        <td>{{movie.title}} </td>
-                        <td>{{movie.category}}</td>
-                        <td>{{movie.directorName}}</td>
-                        <td>{{movie.year}}</td>
-
-                    </tr>
+                        <tr ng-repeat="order in dc.list| orderBy: dc.filterType">
+                            <!--<form name="editForm" novalidate>-->
+                                <td>
+                                    <div> {{$index+1}}</div>
+                                </td>
+                                <td>
+                                    <div>
+                                        {{order.DateTime}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div ng-hide="order.IsEditMode">
+                                        {{order.InputAmount}}
+                                    </div>
+                                    <div ng-show="order.IsEditMode">
+                                        <form name="InputAmountForm"><input  type="number" placeholder="{{order.InputAmount}}" class="form-control" required ng-model="newOrder.InputAmount"></form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div ng-hide="order.IsEditMode">
+                                        {{order.InputCurrency}}
+                                    </div>
+                                    <div ng-show="order.IsEditMode">
+                                        <form name="InputCurrencyForm">
+                                            <select class="form-control" ng-model="newOrder.InputCurrency" required>
+                                                <option>UAH</option>
+                                                <option>USD</option>
+                                                <option>EUR</option>
+                                            </select>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div ng-hide="order.IsEditMode">
+                                        {{order.OutputAmount}}
+                                    </div>
+                                    <div ng-show="order.IsEditMode">
+                                        <form name="OutputAmountForm"> <input type="number" placeholder="{{order.OutputAmount}}" class="form-control" required ng-model="newOrder.OutputAmount"></form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div ng-hide="order.IsEditMode">
+                                        {{order.OutputCurrency}}
+                                    </div>
+                                    <div ng-show="order.IsEditMode">
+                                        <form name="OutputCurrencyForm">
+                                            <select class="form-control" ng-model="newOrder.OutputCurrency" required>
+                                                <option>UAH</option>
+                                                <option>USD</option>
+                                                <option>EUR</option>
+                                            </select>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div ng-hide="order.IsEditMode">
+                                            <button type="button" class="btn btn-danger btn-sm" ng-click="dc.removeOperation(order.Id)">delete</button>
+                                            <button type="button" class="btn btn-default btn-sm" ng-click="dc.startEditOperation(order.Id)">edit</button>
+                                        </div>
+                                        <div ng-show="order.IsEditMode">
+                                            <button type="button" class="btn btn-success btn-sm" ng-click="dc.editOperation(order.Id, newOrder)" ng-disabled="InputAmountForm.$invalid">OK</button>
+                                            <button type="button" class="btn btn-default btn-sm" ng-click="dc.cancelEditOperation(order.Id)">cancel</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            <!--</form>-->
+                          </tr>
                 </tbody>
             </table>
-            <p> You can change ordering by click on table headers..</p>
-            <p> Movies count:  <strong>{{list.movies.length}}</strong></p>
-
-            <div>
-                <button>
-                    <a href="/add" class="btn btn-xs ">Add Movie</a>
-                </button>
-            </div>
+        </div>
+        <div class="panel-body">
+                <a class="btn btn-default" href="/add" role="button">New operation</a>
         </div>
     </div>
 </div>
 
-
-
-<div>
-    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" ng-click="closeSearch()">
-        PUSH to download movie from database by title..
-    </button>
-    <div class="collapse" id="collapseExample">
-        <div class="well">
-
-            <form class="form-inline" name="formForTitle">
-                <div class="form-group">
-                    <label class="sr-only" for="title">Title</label>
-                    <input type="text" class="form-control" id="title" placeholder="Title" ng-model="filmByTitle" required>
-                </div>
-                <button type="submit" class="btn btn-default" ng-click="getMovieByTitle(filmByTitle)" ng-disabled="formForTitle.$invalid">Download..</button>
-            </form>
-
-            <div ng-show="errorDissable">
-                <p>
-                    <font color="red">
-                        FIlm <strong>{{textForError}}</strong> not found..
-                    </font>
-                </p>
-            </div>
-            <div>
-                <table class="table table-stripped table-bordered" ng-show=movieByTitle.length>
-                    <thead>
-                        <tr>
-                            <th class="col-xs-3">Title</th>
-                            <th class="col-xs-3">Category</th>
-                            <th class="col-xs-3">Director</th>
-                            <th class="col-xs-2">Year</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td> {{movieByTitle.title}} </td>
-                            <td> {{movieByTitle.category}}</td>
-                            <td> {{movieByTitle.directorName}}</td>
-                            <td> {{movieByTitle.year}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
